@@ -18,11 +18,15 @@ class ViewController: UIViewController {
     //            We will be using the result label to run autograded tests.
     // MARK: The label to display our calculations
     var resultLabel = UILabel()
+    var text = ""
+    var operatorTracker = "+"
     
     // TODO: This looks like a good place to add some data structures.
     //       One data structure is initialized below for reference.
-    var someDataStructure: [String] = [""]
-    
+    var arrayOfStrings: [String] = [""]
+    var total = 0
+    var count = 0
+    var deleteRes = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +40,7 @@ class ViewController: UIViewController {
         resultLabel.accessibilityValue = "resultLabel"
         makeButtons()
         // Do any additional setup here.
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -45,14 +50,31 @@ class ViewController: UIViewController {
     
     // TODO: A method to update your data structure(s) would be nice.
     //       Modify this one or create your own.
-    func updateSomeDataStructure(_ content: String) {
-        print("Update me like one of those PCs")
+    func updateSomeDataStructure(_ content: String, _ operation: String) {
+        print("total1: ", total)
+            total = intCalculate(a: total, b: Int(content)!, operation: operation)
+            print("total2:", total)
     }
     
     // TODO: Ensure that resultLabel gets updated.
     //       Modify this one or create your own.
     func updateResultLabel(_ content: String) {
-        print("Update me like one of those PCs")
+        
+        if deleteRes == true {
+            print("got here")
+            text = ""
+            resultLabel.text = content
+            deleteRes = false
+        }
+        else {
+            resultLabel.text = text
+            if (resultLabel.text?.characters.count)! < 7 {
+                text.append(content)
+                resultLabel.text = text
+//            print(resultLabel.text)
+//            print(text)
+            }
+        }
     }
     
     
@@ -64,32 +86,84 @@ class ViewController: UIViewController {
     
     // TODO: A simple calculate method for integers.
     //       Modify this one or create your own.
-    func intCalculate(a: Int, b:Int, operation: String) -> Int {
-        print("Calculation requested for \(a) \(operation) \(b)")
+    func intCalculate(a: Int, b: Int, operation: String) -> Int {
+//        print("Calculation requested for \(a) \(operation) \(b)")
+        if operation == "+" {
+            return a + b
+        }
+        if operation == "-" {
+            return a - b
+        }
+        
+        if operation == "*" {
+            return a * b
+        }
+        if operation == "/" {
+            return a / b
+        }
+        if operation == "=" {
+            return Int(resultLabel.text!)!
+        }
+        
+        
+        if operation == "+/-" {
+            return Int(resultLabel.text!)!
+        }
         return 0
     }
     
     // TODO: A general calculate method for doubles
     //       Modify this one or create your own.
     func calculate(a: String, b:String, operation: String) -> Double {
-        print("Calculation requested for \(a) \(operation) \(b)")
+//        print("Calculation requested for \(a) \(operation) \(b)")
+        
+        
         return 0.0
     }
     
     // REQUIRED: The responder to a number button being pressed.
     func numberPressed(_ sender: CustomButton) {
-        guard Int(sender.content) != nil else { return }
-        print("The number \(sender.content) was pressed")
+        updateResultLabel("\(sender.content)")
+        deleteRes = false
         // Fill me in!
     }
     
     // REQUIRED: The responder to an operator button being pressed.
     func operatorPressed(_ sender: CustomButton) {
-        // Fill me in!
+        guard String(sender.content) != nil else { return }
+        print("The operator \(sender.content) was pressed")
+        
+        if sender.content == "+/-" {
+            if (Int(resultLabel.text!)! > 0) {
+                resultLabel.text = "-" + resultLabel.text!
+            }
+            
+            else if (Int(resultLabel.text!)! < 0) {
+                resultLabel.text?.remove(at: (resultLabel.text?.startIndex)!)
+                
+            }
+            
+        }
+        
+        if sender.content == "C" {
+            resultLabel.text = "0"
+            deleteRes = true
+        }
+        else {
+            updateSomeDataStructure(resultLabel.text!, operatorTracker)
+            operatorTracker = String(sender.content)
+            deleteRes = true
+            updateResultLabel(String(total))
+        }
     }
     
     // REQUIRED: The responder to a number or operator button being pressed.
     func buttonPressed(_ sender: CustomButton) {
+        if sender.content == "0" {
+            updateResultLabel("\(sender.content)")
+        }
+        guard String(sender.content) != nil else { return }
+        print("The button \(sender.content) was pressed")
        // Fill me in!
     }
     
